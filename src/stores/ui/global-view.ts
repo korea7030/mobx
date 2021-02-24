@@ -1,14 +1,16 @@
-import {autorun, observable} from "mobx";
-import RootStore from '../root-store';
+import {action, observable} from "mobx";
 
-export default class GlovalView {
-    @observable
-    themeColor: string = 'blue';
-
-    constructor(rootStore: RootStore) {
-        autorun(() => {
-            console.log(rootStore.dataStore.todoStore.list.length);
-        })
-    }
+export enum Views {
+    Todos = 'Todos',
+    Users = 'Users'
 }
 
+export default class GlobalView {
+    @observable
+    currentView: Views = Views.Todos;
+
+    @action
+    updateView(view: Views) {
+        this.currentView = view;
+    }
+}

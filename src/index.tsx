@@ -3,19 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import RootStore from './stores/root-store';
+import 'mobx-react-lite/batchingForReactDom';
+import {createStore} from "./stores/helpers/create-store";
+import {StoreProvider} from "./stores/helpers/store-context";
 
-const rootStore = new RootStore();
+const rootStore = createStore();
 
-console.log(rootStore);
+// create 4 users
+rootStore.dataStore.usersStore.addUser('Georgy');
+rootStore.dataStore.usersStore.addUser('Student 1');
+rootStore.dataStore.usersStore.addUser('Student 2');
+rootStore.dataStore.usersStore.addUser('Student 3');
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
+    <StoreProvider value={rootStore}>
+        <App/>
+    </StoreProvider>, document.getElementById('root'));
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

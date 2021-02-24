@@ -13,6 +13,7 @@
     "strict": true,
     "experimentalDecorators": true, // @ decorator 사용시 필요
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "node",
