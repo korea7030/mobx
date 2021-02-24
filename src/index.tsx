@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import RootStore from './stores/root-store';
+
+const rootStore = new RootStore();
+
+console.log(rootStore);
 
 ReactDOM.render(
   <React.StrictMode>
