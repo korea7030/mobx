@@ -1,91 +1,75 @@
-import { observable, reaction, action, computed, when } from "mobx";
+import { observable, when } from "mobx";
 
-let runningId = 0;
-
-class Todo {
-    id: number = runningId++;
-
-    @observable
-    name: string = '';
-
-    @observable
-    isCompleted: boolean = false;
-
-    private disposer: () => void;
-        
-    constructor(name: string) {
-        this.name = name;
-
-        reaction(
-            () => this.isCompleted,
-            () => {
-                console.log(`Todo ${this.name}`)
-            }
-        )
-    }
-
-    @action
-    updateName(name: string) {
-        this.name = name;
-    }
-
-    @action
-    toggleTodo() {
-        this.isCompleted = !this.isCompleted
-    }
-
-    dispose() {
-        this.disposer()
-    }
-}
-
-class TodoList {
-    @observable
-    list: Todo[] = [];
-
-    constructor() {
-        reaction(
-            () => this.list.length,
-            ()=> {
-                console.log(
-                    `Total: ${this.list.length }, Completed: ${this.completed.length}, Incomplete: ${this.inComplete.length}`
-                )
-            }
-        )
-
-        when (
-            () => this.list.length > 0 && this.list.every(todo => todo.isCompleted === true),
-            () => console.log('Amazing work!')
-        )
-    }
-
-    @action
-    addTodo(name: string) {
-        this.list.push(new Todo(name));
-    }
-
-    @action
-    removeTodo(name: string) {
-        const todoToRemove = this.list.find(todo => todo.name === name);
-
-        if (todoToRemove) {
-            todoToRemove.dispose();
-            const todoIndex = this.list.indexOf(todoToRemove);
-            this.list.splice(todoIndex, 1);
+const demoSchool = {
+  "id": 1,
+  "name": "Udemy",
+  "courses": [
+    {
+      "id": 1,
+      "name": "MobX And React",
+      "students": [
+        {
+          "id": 1,
+          "name": "JaeHyun Lee",
         }
+      ]
     }
+  ]
+}
 
-    @computed
-    get completed() {
-        return this.list.filter(todo => todo.isCompleted === true);
-    }
+const badPractice = observable(demoSchool);
 
-    @computed
-    get inComplete() {
-        return this.list.filter(todo => todo.isCompleted === false);
+console.log(badPractice);
+
+// Good Practice - object들을 핸들링 할 수 있게 class 형태로 data class 생성
+class Student {
+    id: number;
+    @observable
+    name: string;
+
+    constructor(student: Student) {
+        this.id = student.id;
+        this.name = student.name;
+
+        when(
+            () => this.name !== null,
+            () => console.log(this.name, 'Easy To log Each Student Name')
+        );
     }
 }
 
-const todoList = new TodoList();
 
-todoList.addTodo('sdfsdfsdf');
+class School {
+    id: number;
+    @observable
+    name: string;
+    @observable
+    courses: Course[];
+
+    constructor(school: School) {
+        this.id = school.id;
+        this.name = school.name;
+
+        this.courses = school.courses.map(course => new Course(course));
+    }
+}
+
+class Course {
+    id: number;
+    @observable
+    name: string;
+    @observable
+    students: Student[];
+
+    constructor(course: Course) {
+        this.id = course.id;
+        this.name = course.name;
+
+        this.students = course.students.map(student => new Student(student));
+    }
+}
+
+
+const goodPractice = new School(demoSchool);
+
+console.log(goodPractice, 'We Have Control Of All The objects');
